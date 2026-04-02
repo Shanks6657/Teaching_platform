@@ -21,6 +21,13 @@ public class UserController {
     private final Map<String, User> userDatabase = new HashMap<>();
     private static final Set<String> ALLOWED_ROLES = new HashSet<>(Arrays.asList("student", "teacher"));
 
+    @GetMapping("/")
+    public String showIndexPage(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        model.addAttribute("user", currentUser);
+        return "index";
+    }
+
     @GetMapping("/register")
     public String showRegisterForm() {
         return "register";
@@ -98,17 +105,22 @@ public class UserController {
     }
 
     @GetMapping("/home")
-    public String showHomePage(HttpSession session, Model model) {
+    public String showHomePage(@RequestParam(value = "role", defaultValue = "student") String role, HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
-        if (currentUser == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("user", currentUser);
         
-        if ("student".equals(currentUser.getRole())) {
-            model.addAttribute("courses", Arrays.asList("高等数学 - 已选修", "大学物理 - 已选修", "计算机科学 - 已选修"));
-        } else if ("teacher".equals(currentUser.getRole())) {
-            model.addAttribute("courses", Arrays.asList("数据结构 (2026春)", "计算机网络 (2026秋)"));
+        String displayRole = role;
+        if (currentUser != null) {
+            displayRole = currentUser.getRole();
+            model.addAttribute("user", currentUser);
+        } else {
+            // For previewing without login
+            model.addAttribute("role", role);
+        }
+        
+        if ("student".equals(displayRole)) {
+            model.addAttribute("courses", Arrays.asList("高等数学", "大学物理", "计算机科学导论"));
+        } else if ("teacher".equals(displayRole)) {
+            model.addAttribute("courses", Arrays.asList("数据结构与算法", "计算机网络"));
         }
         
         return "home";
