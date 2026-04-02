@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户首页 - 教学平台</title>
+    <link rel="stylesheet" th:href="@{/css/cyberpunk.css}">
+</head>
+<body>
+<div class="page">
+    <div class="card" style="max-width: 600px; width: 100%;">
+        <h1 class="title">Welcome</h1>
+        <p class="subtitle">欢迎来到教学平台！</p>
+
+        <h3 style="color: var(--primary-color);">个人信息</h3>
+        <p style="color: var(--text-color);">用户名: <span th:text="${user.username}" style="color: var(--secondary-color);"></span></p>
+        <p style="color: var(--text-color);">身 份: <span th:text="${user.role == 'student' ? '学生' : '老师'}" style="color: var(--secondary-color);"></span></p>
+
+        <h3 style="color: var(--primary-color); margin-top: 20px;">
+            <span th:if="${user.role == 'student'}">我的课表</span>
+            <span th:if="${user.role == 'teacher'}">我创建的课程</span>
+        </h3>
+
+        <ul style="color: var(--text-color); list-style-type: none; padding: 0;">
+            <li th:each="course : ${courses}" style="background-color: var(--bg-color); margin-bottom: 8px; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px;">
+                <span th:text="${course}"></span>
+            </li>
+        </ul>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <a th:href="@{/logout}" style="color: var(--primary-color); text-decoration: none; border: 1px solid var(--primary-color); padding: 5px 15px; border-radius: 4px; transition: all 0.3s ease;">退出登录</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
