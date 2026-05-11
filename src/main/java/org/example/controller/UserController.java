@@ -126,6 +126,61 @@ public class UserController {
         return "home";
     }
 
+    @GetMapping("/profile")
+    public String showProfilePage(HttpSession session, Model model) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", currentUser);
+        return "profile";
+    }
+
+    @PostMapping("/profile")
+    public String updateProfile(
+            @RequestParam(required = false) String nickname,
+            @RequestParam(required = false) String realName,
+            @RequestParam(required = false) String idNumber,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String school,
+            @RequestParam(required = false) String major,
+            @RequestParam(required = false) String className,
+            @RequestParam(required = false) String gender,
+            @RequestParam(required = false) String motto,
+            HttpSession session, Model model) {
+            
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        // Basic validation
+        if (email != null && !email.isEmpty() && !email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            model.addAttribute("error", "邮箱格式不合法！");
+            model.addAttribute("user", currentUser);
+            return "profile";
+        }
+
+        // Update fields
+        currentUser.setNickname(nickname);
+        currentUser.setRealName(realName);
+        currentUser.setIdNumber(idNumber);
+        currentUser.setEmail(email);
+        currentUser.setSchool(school);
+        currentUser.setMajor(major);
+        currentUser.setClassName(className);
+        currentUser.setGender(gender);
+        currentUser.setMotto(motto);
+        
+        // Update in database (in-memory)
+        userDatabase.put(currentUser.getUsername(), currentUser);
+        session.setAttribute("currentUser", currentUser);
+
+        model.addAttribute("user", currentUser);
+        model.addAttribute("success", "个人信息修改成功！");
+        return "profile";
+    }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();

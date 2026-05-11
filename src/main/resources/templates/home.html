@@ -160,7 +160,8 @@
     <div class="nav-right">
         <a th:if="${user == null}" th:href="@{/login}" class="login-btn">登录 / 注册</a>
         <span th:if="${user != null}" style="color: #fff; font-size: 14px;">你好, <span th:text="${user.username}"></span></span>
-        <a th:if="${user != null}" th:href="@{/logout}" class="login-btn" style="border-color: #e24a4a; color: #e24a4a;">退出</a>
+        <a th:if="${user != null}" th:href="@{/profile}" class="nav-item" style="margin-left: 10px;">个人信息</a>
+        <a th:if="${user != null}" th:href="@{/logout}" class="login-btn" style="border-color: #e24a4a; color: #e24a4a; margin-left:10px;">退出</a>
     </div>
 </div>
 
