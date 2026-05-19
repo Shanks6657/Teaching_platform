@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.example.util.MarkdownUtils;
 
 @Controller
 @RequestMapping("/student")
@@ -177,6 +178,7 @@ public class StudentController {
         model.addAttribute("task", task);
         model.addAttribute("course", course);
         model.addAttribute("submission", submission);
+        model.addAttribute("taskContentHtml", MarkdownUtils.toHtml(task.getContent()));
         Object uploadSuccess = session.getAttribute("uploadSuccess");
         if (uploadSuccess != null) {
             model.addAttribute("success", uploadSuccess.toString());

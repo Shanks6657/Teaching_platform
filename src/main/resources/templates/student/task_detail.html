@@ -34,7 +34,7 @@
     <h2 th:text="${task.title}">作业标题</h2>
     <div class="meta">类型：<span th:text="${task.taskType}"></span> | 满分：<span th:text="${task.fullScore}"></span>分</div>
     <div class="meta" th:if="${task.allowedFileTypes != null && task.allowedFileTypes != ''}">允许格式：<span th:text="${task.allowedFileTypes}"></span></div>
-    <div class="task-content" th:if="${task.content != null && task.content != ''}" th:text="${task.content}" data-markdown="true">作业内容</div>
+    <div class="task-content" th:if="${taskContentHtml != null && taskContentHtml != ''}" th:utext="${taskContentHtml}">作业内容</div>
     <div class="meta" th:if="${task.description != null && task.description != ''}" style="margin-top: 10px;" th:text="${task.description}">作业说明</div>
   </div>
 
@@ -76,31 +76,6 @@
     tip.textContent = '允许格式：' + normalized.join(', ');
   } else {
     tip.textContent = '未限制文件格式';
-  }
-
-  const mdBlocks = document.querySelectorAll('[data-markdown="true"]');
-  mdBlocks.forEach((el) => {
-    const text = el.textContent || '';
-    el.innerHTML = renderMarkdown(text);
-  });
-
-  function escapeHtml(str) {
-    return str.replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-  }
-
-  function renderMarkdown(md) {
-    let html = escapeHtml(md);
-    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-    html = html.replace(/^###\s+(.*)$/gm, '<h3>$1</h3>');
-    html = html.replace(/^##\s+(.*)$/gm, '<h2>$1</h2>');
-    html = html.replace(/^#\s+(.*)$/gm, '<h1>$1</h1>');
-    html = html.replace(/^\-\s+(.*)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    html = html.replace(/\n{2,}/g, '<br/><br/>');
-    html = html.replace(/\n/g, '<br/>');
-    return html;
   }
 </script>
 

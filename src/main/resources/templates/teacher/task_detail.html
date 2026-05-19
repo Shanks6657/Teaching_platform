@@ -33,7 +33,7 @@
   <h2 th:text="${task.title}">作业标题</h2>
   <p>类型：<span th:text="${task.taskType}"></span> | 满分：<span th:text="${task.fullScore}"></span>分 | 状态：<span th:text="${task.status}"></span></p>
   <div class="task-desc" th:text="${task.description}">作业描述</div>
-  <div th:if="${task.content != null && task.content != ''}" class="task-content" th:text="${task.content}">作业内容</div>
+  <div th:if="${taskContentHtml != null && taskContentHtml != ''}" class="task-content" th:utext="${taskContentHtml}">作业内容</div>
   <div class="task-desc" th:if="${task.allowedFileTypes != null && task.allowedFileTypes != ''}">允许格式：<span th:text="${task.allowedFileTypes}"></span></div>
 </div>
 

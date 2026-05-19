@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.model.*;
+import org.example.util.MarkdownUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -176,6 +177,9 @@ public class TeacherController {
         .filter(s -> s.getTaskId().equals(taskId))
         .collect(Collectors.toList());
     model.addAttribute("task", task);
+    if (task != null) {
+      model.addAttribute("taskContentHtml", MarkdownUtils.toHtml(task.getContent()));
+    }
     model.addAttribute("submissions", submissions);
     return "teacher/task_detail";
   }

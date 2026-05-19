@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <title>发布作业 - 教师后台</title>
   <link rel="stylesheet" th:href="@{/css/cyberpunk.css}">
-    <style>
+  <script src="https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js"></script>
+  <style>
     body { background-color: var(--bg-main, #f5f0e6); color: #1a1a1a; padding: 50px; }
     .form-container { max-width: 600px; background: #ffffff; padding: 30px; border: 2px solid #121212; box-shadow: 6px 6px 0px #121212; margin: 0 auto; }
     input, select, textarea { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 20px; background: #ffffff; border: 2px solid #121212; color: #1a1a1a; box-sizing: border-box; }
@@ -82,7 +83,7 @@
   document.getElementById('previewBtn').addEventListener('click', () => {
     const content = contentEl.value || '（无内容）';
     previewBox.style.display = 'block';
-    previewBox.textContent = content;
+    previewBox.innerHTML = marked.parse(content);
   });
 
   document.getElementById('importMdBtn').addEventListener('click', () => {
