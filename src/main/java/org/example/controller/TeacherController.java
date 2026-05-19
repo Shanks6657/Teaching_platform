@@ -4,6 +4,12 @@ import org.example.model.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.*;
@@ -204,6 +210,19 @@ public class TeacherController {
     taskDatabase.removeIf(t -> t.getTaskId().equals(taskId));
     submissionDatabase.removeIf(s -> s.getTaskId().equals(taskId));
     return "redirect:/teacher/task/manage";
+  }
+
+  @GetMapping("/task/download")
+  public ResponseEntity<Resource> downloadSubmission(@RequestParam String filePath) throws Exception {
+    Path path = Paths.get(filePath);
+    Resource resource = new UrlResource(path.toUri());
+
+    if (resource.exists() || resource.isReadable()) {
+      return ResponseEntity.ok()
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+          .body(resource);
+    }
+    throw new RuntimeException("Could not read the file!");
   }
 
   // ========== 班级管理 ==========

@@ -79,7 +79,7 @@
                             <span class="task-badge">作业</span>
                             <span th:text="${task.title}">作业标题</span>
                         </div>
-                        <a href="#" class="task-btn">进入作业</a>
+                        <a th:href="@{/student/task/detail(taskId=${task.taskId})}" class="task-btn">进入作业</a>
                     </div>
                     <div class="task-meta">
                         发布时间: <span th:text="${#dates.format(task.startTime, 'yyyy-MM-dd HH:mm')}"></span>

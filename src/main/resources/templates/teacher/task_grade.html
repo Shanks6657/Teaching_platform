@@ -33,7 +33,7 @@
 
   <div class="card" th:if="${submission != null}">
     <h4>学生提交内容</h4>
-    <div class="submission-content" th:text="${submission.content != null ? submission.content : '无内�?}"></div>
+    <div class="submission-content" th:text="${submission.content != null ? submission.content : '无内容'}"></div>
     <div th:if="${submission.fileUrl != null}">
       <a th:href="${submission.fileUrl}" style="color: #4a90e2;">📎 查看附件</a>
     </div>
@@ -44,11 +44,11 @@
     <form action="/teacher/task/grade" method="post">
       <input type="hidden" name="submissionId" th:value="${submission.submissionId}">
 
-      <label>得分 (满分 <span th:text="${submission.score != null ? '已批�? : '待批�?}"></span>)</label>
-      <input type="number" name="score" step="0.5" class="score-input" th:value="${submission.score != null ? submission.score : ''}" placeholder="请输入分�? required>
+      <label>得分 (满分 <span th:text="${submission.score != null ? '已批改' : '待批改'}"></span>)</label>
+      <input type="number" name="score" step="0.5" class="score-input" th:value="${submission.score != null ? submission.score : ''}" placeholder="请输入分数" required>
 
       <label>评语</label>
-      <textarea name="comment" placeholder="请输入批改评�?.."> </textarea>
+      <textarea name="comment" placeholder="请输入批改评语..."></textarea>
 
       <button type="submit" class="btn-submit">保存批改结果</button>
     </form>

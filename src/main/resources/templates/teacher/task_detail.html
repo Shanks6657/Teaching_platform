@@ -5,19 +5,21 @@
   <title>作业详情 - 教学平台</title>
   <link rel="stylesheet" th:href="@{/css/cyberpunk.css}">
   <style>
-    body { background-color: #0b0f19; color: #e0e0e0; padding: 40px; }
-    .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; }
-    .task-info { background: #1a1e29; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #4a90e2; }
+    body { background-color: #f5f0e6; color: #1a1a1a; padding: 40px; font-family: sans-serif; }
+    .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; }
+    .task-info { background: #ffffff; padding: 20px; border-radius: 0; margin-bottom: 30px; border: 2px solid #1a1a1a; box-shadow: 5px 5px 0px #1a1a1a; }
     .task-info h2 { margin-top: 0; }
-    .task-desc { color: #8c92a5; margin: 15px 0; }
-    .btn-gray { background: #555; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; }
-    table { width: 100%; border-collapse: collapse; background: #1a1e29; }
-    th, td { padding: 12px; border-bottom: 1px solid #333; text-align: left; }
-    th { color: #4a90e2; }
-    .status-submitted { color: #2ecc71; }
-    .status-graded { color: #f1c40f; }
-    .grade-link { color: #4a90e2; text-decoration: none; }
+    .task-desc { color: #555; margin: 15px 0; white-space: pre-wrap; }
+    .task-content { background: #ffffff; border: 2px dashed #1a1a1a; padding: 16px; white-space: pre-wrap; margin-top: 10px; }
+    .btn-gray { background: #e0e0e0; color: #1a1a1a; padding: 8px 16px; text-decoration: none; border-radius: 0; border: 2px solid #1a1a1a; box-shadow: 3px 3px 0px #1a1a1a; }
+    table { width: 100%; border-collapse: collapse; background: #ffffff; border: 2px solid #1a1a1a; box-shadow: 5px 5px 0px #1a1a1a; }
+    th, td { padding: 12px; border-bottom: 2px solid #1a1a1a; border-right: 2px solid #1a1a1a; text-align: left; }
+    th { color: #1a1a1a; background: #e0e0e0; }
+    .status-submitted { color: #2a634b; font-weight: bold; }
+    .status-graded { color: #d89632; font-weight: bold; }
+    .grade-link { color: #2a634b; text-decoration: underline; font-weight: bold; }
     .score { font-weight: bold; }
+    .file-link { color: #2a634b; text-decoration: underline; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -31,6 +33,8 @@
   <h2 th:text="${task.title}">作业标题</h2>
   <p>类型：<span th:text="${task.taskType}"></span> | 满分：<span th:text="${task.fullScore}"></span>分 | 状态：<span th:text="${task.status}"></span></p>
   <div class="task-desc" th:text="${task.description}">作业描述</div>
+  <div th:if="${task.content != null && task.content != ''}" class="task-content" th:text="${task.content}">作业内容</div>
+  <div class="task-desc" th:if="${task.allowedFileTypes != null && task.allowedFileTypes != ''}">允许格式：<span th:text="${task.allowedFileTypes}"></span></div>
 </div>
 
 <h3>学生提交列表</h3>
@@ -43,6 +47,7 @@
     <th>提交状态</th>
     <th>得分</th>
     <th>评测结果</th>
+    <th>附件</th>
     <th>操作</th>
   </tr>
   </thead>
@@ -54,11 +59,15 @@
     <td class="score" th:text="${sub.score != null ? sub.score + '分' : '未批改'}">得分</td>
     <td th:text="${sub.judgeStatus != null ? sub.judgeStatus : '-'}">评测结果</td>
     <td>
+      <a th:if="${sub.fileUrl != null}" th:href="@{/teacher/task/download(filePath=${sub.fileUrl})}" class="file-link">下载</a>
+      <span th:if="${sub.fileUrl == null}">-</span>
+    </td>
+    <td>
       <a th:href="@{/teacher/task/grade/{submissionId}(submissionId=${sub.submissionId})}" class="grade-link">✏️ 批改/查看</a>
     </td>
   </tr>
   <tr th:if="${#lists.isEmpty(submissions)}">
-    <td colspan="6" style="text-align: center; color: #555;">暂无学生提交记录</td>
+    <td colspan="7" style="text-align: center; color: #555;">暂无学生提交记录</td>
   </tr>
   </tbody>
 </table>
