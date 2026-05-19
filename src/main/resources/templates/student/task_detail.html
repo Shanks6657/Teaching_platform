@@ -5,37 +5,43 @@
   <title>作业提交 - 教学平台</title>
   <link rel="stylesheet" th:href="@{/css/cyberpunk.css}">
   <style>
-    body { background-color: #f5f0e6; color: #1a1a1a; padding: 40px; font-family: sans-serif; }
+    body { background-color: #f5f0e6; color: #1a1a1a; padding: 32px 20px; font-family: sans-serif; }
+    .page-container { width: 100%; max-width: 100%; margin: 0 auto; }
     .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #1a1a1a; padding-bottom: 16px; }
-    .card { background: #ffffff; border: 2px solid #1a1a1a; box-shadow: 5px 5px 0px #1a1a1a; padding: 20px; margin-bottom: 20px; }
+    .card { background: #ffffff; border: 2px solid #1a1a1a; box-shadow: 5px 5px 0px #1a1a1a; padding: 20px; margin-bottom: 20px; width: 100%; }
     .btn { background: #1a1a1a; color: #f5f0e6; padding: 10px 16px; text-decoration: none; display: inline-block; border: 2px solid #1a1a1a; box-shadow: 3px 3px 0px #1a1a1a; }
     .btn-secondary { background: #e0e0e0; color: #1a1a1a; border: 2px solid #1a1a1a; box-shadow: 3px 3px 0px #1a1a1a; padding: 10px 16px; }
-    .task-content { background: #ffffff; border: 2px dashed #1a1a1a; padding: 16px; white-space: pre-wrap; margin-top: 10px; }
+    .task-content { background: #ffffff; border: 2px dashed #1a1a1a; padding: 16px; margin-top: 10px; line-height: 1.6; width: 100%; }
+    .task-content h1, .task-content h2, .task-content h3 { margin: 12px 0 6px; }
+    .task-content ul { padding-left: 20px; }
     .meta { color: #555; font-size: 13px; }
     .status { font-weight: bold; }
     .status-graded { color: #d89632; }
     .status-submitted { color: #2a634b; }
     .error { color: #d94a4a; font-weight: bold; margin-bottom: 10px; }
+    .success { color: #2a634b; font-weight: bold; margin-bottom: 10px; }
   </style>
 </head>
 <body>
 
-<div class="header-box">
-  <h1>作业提交</h1>
-  <a th:href="@{/student/course/detail/{id}(id=${course.courseId})}" class="btn-secondary">← 返回课程主页</a>
-</div>
+<div class="page-container">
+  <div class="header-box">
+    <h1>作业提交</h1>
+    <a th:href="@{/student/course/detail/{id}(id=${course.courseId})}" class="btn-secondary">← 返回课程主页</a>
+  </div>
 
-<div class="card" th:if="${task != null}">
-  <h2 th:text="${task.title}">作业标题</h2>
-  <div class="meta">类型：<span th:text="${task.taskType}"></span> | 满分：<span th:text="${task.fullScore}"></span>分</div>
-  <div class="meta" th:if="${task.allowedFileTypes != null && task.allowedFileTypes != ''}">允许格式：<span th:text="${task.allowedFileTypes}"></span></div>
-  <div class="task-content" th:if="${task.content != null && task.content != ''}" th:text="${task.content}">作业内容</div>
-  <div class="meta" th:if="${task.description != null && task.description != ''}" style="margin-top: 10px;" th:text="${task.description}">作业说明</div>
-</div>
+  <div class="card" th:if="${task != null}">
+    <h2 th:text="${task.title}">作业标题</h2>
+    <div class="meta">类型：<span th:text="${task.taskType}"></span> | 满分：<span th:text="${task.fullScore}"></span>分</div>
+    <div class="meta" th:if="${task.allowedFileTypes != null && task.allowedFileTypes != ''}">允许格式：<span th:text="${task.allowedFileTypes}"></span></div>
+    <div class="task-content" th:if="${task.content != null && task.content != ''}" th:text="${task.content}" data-markdown="true">作业内容</div>
+    <div class="meta" th:if="${task.description != null && task.description != ''}" style="margin-top: 10px;" th:text="${task.description}">作业说明</div>
+  </div>
 
-<div class="card">
-  <h3>我的提交</h3>
-  <div th:if="${error != null}" class="error" th:text="${error}"></div>
+  <div class="card">
+    <h3>我的提交</h3>
+    <div th:if="${success != null}" class="success" th:text="${success}"></div>
+    <div th:if="${error != null}" class="error" th:text="${error}"></div>
 
   <div th:if="${submission != null}">
     <div class="meta">提交状态：
@@ -49,13 +55,14 @@
     </div>
   </div>
 
-  <form action="/student/task/submit" method="post" enctype="multipart/form-data" style="margin-top: 16px;">
-    <input type="hidden" name="taskId" th:value="${task.taskId}">
-    <div class="meta">上传作业文件（可重复提交覆盖）</div>
-    <input type="file" id="taskFile" name="file" style="margin: 10px 0;" required>
-    <div class="meta" id="acceptTip" style="margin-bottom: 10px;"></div>
-    <button type="submit" class="btn">提交作业</button>
-  </form>
+    <form action="/student/task/submit" method="post" enctype="multipart/form-data" style="margin-top: 16px;">
+      <input type="hidden" name="taskId" th:value="${task.taskId}">
+      <div class="meta">上传作业文件（可重复提交覆盖）</div>
+      <input type="file" id="taskFile" name="file" style="margin: 10px 0;" required>
+      <div class="meta" id="acceptTip" style="margin-bottom: 10px;"></div>
+      <button type="submit" class="btn">提交作业</button>
+    </form>
+  </div>
 </div>
 
 <script th:inline="javascript">
@@ -69,6 +76,31 @@
     tip.textContent = '允许格式：' + normalized.join(', ');
   } else {
     tip.textContent = '未限制文件格式';
+  }
+
+  const mdBlocks = document.querySelectorAll('[data-markdown="true"]');
+  mdBlocks.forEach((el) => {
+    const text = el.textContent || '';
+    el.innerHTML = renderMarkdown(text);
+  });
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+  }
+
+  function renderMarkdown(md) {
+    let html = escapeHtml(md);
+    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    html = html.replace(/^###\s+(.*)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^##\s+(.*)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^#\s+(.*)$/gm, '<h1>$1</h1>');
+    html = html.replace(/^\-\s+(.*)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    html = html.replace(/\n{2,}/g, '<br/><br/>');
+    html = html.replace(/\n/g, '<br/>');
+    return html;
   }
 </script>
 

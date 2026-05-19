@@ -177,6 +177,11 @@ public class StudentController {
         model.addAttribute("task", task);
         model.addAttribute("course", course);
         model.addAttribute("submission", submission);
+        Object uploadSuccess = session.getAttribute("uploadSuccess");
+        if (uploadSuccess != null) {
+            model.addAttribute("success", uploadSuccess.toString());
+            session.removeAttribute("uploadSuccess");
+        }
         return "student/task_detail";
     }
 
@@ -194,37 +199,47 @@ public class StudentController {
 
         if (task == null) return "redirect:/student/course/my";
 
-        // Handle file upload
         String filePath = null;
-        if (file != null && !file.isEmpty()) {
-            try {
-                // Verify file type if task has restriction
-                String allowed = task.getAllowedFileTypes();
-                String filename = file.getOriginalFilename();
-                if (allowed != null && !allowed.trim().isEmpty() && filename != null) {
-                    boolean isValid = false;
-                    String[] types = allowed.split(",");
-                    for (String type : types) {
-                        if (filename.toLowerCase().endsWith(type.trim().toLowerCase())) {
-                            isValid = true;
-                            break;
-                        }
+        if (file == null || file.isEmpty()) {
+            model.addAttribute("error", "请选择要上传的文件");
+            return taskDetail(taskId, session, model);
+        }
+        try {
+            String allowed = task.getAllowedFileTypes();
+            String filename = file.getOriginalFilename();
+            if (filename == null || filename.trim().isEmpty()) {
+                model.addAttribute("error", "文件名无效，请重新选择文件");
+                return taskDetail(taskId, session, model);
+            }
+            filename = Paths.get(filename).getFileName().toString();
+            if (allowed != null && !allowed.trim().isEmpty()) {
+                boolean isValid = false;
+                String[] types = allowed.split(",");
+                for (String type : types) {
+                    String ext = type.trim().toLowerCase();
+                    if (!ext.startsWith(".")) {
+                        ext = "." + ext;
                     }
-                    if (!isValid) {
-                        model.addAttribute("error", "文件格式不正确，允许的格式: " + allowed);
-                        return taskDetail(taskId, session, model);
+                    if (filename.toLowerCase().endsWith(ext)) {
+                        isValid = true;
+                        break;
                     }
                 }
-
-                File uploadDir = new File(UPLOAD_DIR);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
-
-                Path path = Paths.get(UPLOAD_DIR + System.currentTimeMillis() + "_" + filename);
-                Files.write(path, file.getBytes());
-                filePath = path.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
+                if (!isValid) {
+                    model.addAttribute("error", "文件格式不正确，允许的格式: " + allowed);
+                    return taskDetail(taskId, session, model);
+                }
             }
+
+            Path uploadRoot = Paths.get(UPLOAD_DIR).toAbsolutePath().normalize();
+            Files.createDirectories(uploadRoot);
+
+            Path target = uploadRoot.resolve(System.currentTimeMillis() + "_" + filename);
+            Files.copy(file.getInputStream(), target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            filePath = target.toString();
+        } catch (Exception e) {
+            model.addAttribute("error", "上传失败，请稍后重试");
+            return taskDetail(taskId, session, model);
         }
 
         Submission submission = TeacherController.submissionDatabase.stream()
@@ -245,7 +260,7 @@ public class StudentController {
         }
         submission.setSubmitTime(new Date());
         submission.setSubmitStatus("已提交");
-
+        session.setAttribute("uploadSuccess", "作业上传成功");
         return "redirect:/student/task/detail?taskId=" + taskId;
     }
 
