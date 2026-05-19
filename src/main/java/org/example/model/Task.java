@@ -18,7 +18,16 @@ public class Task {
   private BigDecimal weight;
   private String status;  // 草稿/已发布/已关闭
 
+  private String allowedFileTypes; // 允许上传的文件格式
+  private String content; // 作业/考试具体内容(支持Markdown)
+
   // ========== 所有 Getter 和 Setter ==========
+
+  public String getAllowedFileTypes() { return allowedFileTypes; }
+  public void setAllowedFileTypes(String allowedFileTypes) { this.allowedFileTypes = allowedFileTypes; }
+
+  public String getContent() { return content; }
+  public void setContent(String content) { this.content = content; }
 
   public Long getTaskId() { return taskId; }
   public void setTaskId(Long taskId) { this.taskId = taskId; }

@@ -141,6 +141,8 @@ public class TeacherController {
       @RequestParam String title,
       @RequestParam String taskType,
       @RequestParam(required = false) String description,
+      @RequestParam(required = false) String content,
+      @RequestParam(required = false) String allowedFileTypes,
       @RequestParam(required = false) String endTime,
       @RequestParam(required = false) Double fullScore,
       HttpSession session) {
@@ -150,11 +152,13 @@ public class TeacherController {
     t.setTitle(title);
     t.setCourseId(courseId);
     t.setTaskType(taskType);
-    t.setDescription(description != null ? description : "");
-    t.setTeacherId(Long.valueOf(user.getUsername().hashCode()));
-    t.setFullScore(fullScore != null ? BigDecimal.valueOf(fullScore) : BigDecimal.valueOf(100));
-    t.setStatus("已发布");
+    t.setDescription(description);
+    t.setContent(content);
+    t.setAllowedFileTypes(allowedFileTypes);
+    t.setFullScore(fullScore != null ? BigDecimal.valueOf(fullScore) : BigDecimal.ZERO);
     t.setStartTime(new Date());
+    t.setStatus("已发布");
+    
     taskDatabase.add(t);
     return "redirect:/teacher/task/manage";
   }
@@ -280,3 +284,4 @@ public class TeacherController {
     return "teacher/score_statistics";
   }
 }
+

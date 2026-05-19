@@ -91,8 +91,15 @@ public class UserController {
                 .filter(c -> currentUser.getUsername().equals(c.getTeacherId()))
                 .collect(Collectors.toList());
             model.addAttribute("courses", myCourses);
+        } else if (currentUser != null && "student".equals(currentUser.getRole())) {
+            // 学生：只看到自己选过的课
+            List<Long> myCourseIds = StudentController.studentCourses.getOrDefault(currentUser.getUsername(), new ArrayList<>());
+            List<Course> myCourses = TeacherController.courseDatabase.stream()
+                .filter(c -> myCourseIds.contains(c.getCourseId()))
+                .collect(Collectors.toList());
+            model.addAttribute("courses", myCourses);
         } else {
-            // 学生或未登录：看到全平台所有的课
+            // 未登录：看到全平台所有的课
             model.addAttribute("courses", TeacherController.courseDatabase);
         }
 
