@@ -112,7 +112,7 @@
         }
         .btn-submit {
             background-color: var(--border-color, #1a1a1a); color: var(--bg-main, #f5f0e6); box-shadow: 4px 4px 0px var(--border-color);
-            color: var(--text-main, #1a1a1a);
+            color: var(--text-main, #ffffff);
             border: none;
             padding: 10px 24px;
             border-radius: 4px;
@@ -150,7 +150,7 @@
     </div>
 
     <div class="nav-right">
-        <span th:if="${user != null}" style="color: var(--text-main, #1a1a1a); font-size: 14px;">你好, <span th:text="${user.username}"></span></span>
+        <span th:if="${user != null}" style="color: var(--text-main, #ffffff); font-size: 14px;">你好, <span th:text="${user.username}"></span></span>
         <a th:href="@{/profile}" class="nav-item active" style="margin-left: 10px;">个人信息</a>
         <a th:href="@{/logout}" class="login-btn" style="border-color: var(--accent-red); background: var(--accent-red); color: white; box-shadow: 3px 3px 0px #1a1a1a;">退出</a>
     </div>

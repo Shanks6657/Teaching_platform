@@ -133,7 +133,10 @@ public class StudentController {
     }
 
     @GetMapping("/course/detail/{courseId}")
-    public String courseDetail(@PathVariable Long courseId, HttpSession session, Model model) {
+    public String courseDetail(@PathVariable Long courseId,
+                               @RequestParam(required = false) String tab,
+                               HttpSession session,
+                               Model model) {
         User user = (User) session.getAttribute("currentUser");
         if (user == null || !"student".equals(user.getRole())) return "redirect:/login";
 
@@ -143,14 +146,31 @@ public class StudentController {
 
         if (course == null) return "redirect:/student/course/my";
 
-        // Filter tasks for this course
-        List<Task> tasks = TeacherController.taskDatabase.stream()
+        String activeTab = (tab == null || tab.trim().isEmpty()) ? "home" : tab.trim();
+
+        List<Task> allTasks = TeacherController.taskDatabase.stream()
             .filter(t -> t.getCourseId().equals(courseId))
             .collect(Collectors.toList());
 
+        List<Task> filteredTasks = allTasks;
+        if ("homework".equals(activeTab)) {
+            filteredTasks = allTasks.stream()
+                .filter(t -> "作业".equals(t.getTaskType()))
+                .collect(Collectors.toList());
+        } else if ("exam".equals(activeTab)) {
+            filteredTasks = allTasks.stream()
+                .filter(t -> "考试".equals(t.getTaskType()))
+                .collect(Collectors.toList());
+        } else if ("lab".equals(activeTab)) {
+            filteredTasks = allTasks.stream()
+                .filter(t -> "编程实训".equals(t.getTaskType()))
+                .collect(Collectors.toList());
+        }
+
+        model.addAttribute("user", user);
         model.addAttribute("course", course);
-        model.addAttribute("tasks", tasks);
-        // Returns the detail view
+        model.addAttribute("tasks", filteredTasks);
+        model.addAttribute("tab", activeTab);
         return "student/course_detail";
     }
 
